@@ -1,10 +1,35 @@
-Jenkinsfile (Declarative Pipeline)
+// Jenkinsfile (Declarative Pipeline)
 pipeline {
-    agent { docker { image node:6.3 } }
+    agent any
+      tools {nodejs "nodejs"}
+
+    environment {
+      CI = 'true'
+    }
     stages {
-        stage(build) {
+		stage('installDependencies') {
             steps {
-                sh npm --version
+				echo 'installing dependencies'
+				sh 'npm audit fix'
+				sh 'npm install'
+            }
+        }
+        // stage('test') {
+        //     steps {
+		// 		echo 'running tests'
+        //         sh 'npm test'
+        //     }
+        // }
+		stage('build') {
+            steps {
+				echo 'running build'
+                sh 'npm run build'
+            }
+        }
+		stage('start') {
+            steps {
+				echo 'starting the application'
+                sh 'npm start'
             }
         }
     }
